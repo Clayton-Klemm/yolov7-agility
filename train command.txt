@@ -1,0 +1,11 @@
+----------------example of a train
+python train.py --workers 4 --device 0 --batch-size 8 --epochs 100 --img 640 640 --data data/custom_data.yaml --hyp data/hyp.scratch.tiny.yaml --cfg cfg/training/yolov7-tiny-custom.yaml --name yolov7-custom-tiny --weights yolov7-tiny.pt
+
+
+python train.py --workers 4 --device 0 --batch-size 4 --epochs 100 --img 640 640 --data data/custom_data.yaml --hyp data/hyp.scratch.custom.yaml --cfg cfg/training/yolov7-custom.yaml --name yolov7-custom --weights yolov7.pt
+
+-----------------detect-------------------
+
+python detect.py --weights runs/train/yolov7-custom4/weights/best.pt --conf 0.5 --img-size 640 --source agility.mkv --view-img --no-trace
+
+python detect.py --weights runs/train/yolov7-custom2/weights/best.pt --conf 0.5 --img-size 640 --source agility_3.mkv --view-img --no-trace

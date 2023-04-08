@@ -1,0 +1,10 @@
+# combined annotation with xp detection
+
+train: ./data/train
+val: ./data/val
+
+# number of classes
+nc: 4
+
+# class names
+names: [ 'agility-hotspot', 'avatar', 'portal', 'xp' ]
