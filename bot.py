@@ -248,7 +248,6 @@ class App:
         self.label = tk.Label(master, text="Enter window title")
         self.label.pack(fill=tk.NONE, expand=False, side=tk.TOP, padx=10, pady=10)
         self.window_title_entry = tk.Entry(master)
-        self.window_title_entry.insert(0, "moto g fast")
         self.window_title_entry.pack(fill=tk.NONE, expand=False, side=tk.TOP, padx=10, pady=5)
         self.start_button = tk.Button(master, text="Start", command=self.start_recording)
         self.stop_button = tk.Button(master, text="Stop", command=self.stop_recording, state=tk.DISABLED)
