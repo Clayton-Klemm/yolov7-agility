@@ -20,4 +20,4 @@ python detect.py --weights runs/train/yolov7-custom4/weights/best.pt --conf 0.5 
 python detect.py --weights runs/train/yolov7-custom2/weights/best.pt --conf 0.5 --img-size 640 --source agility_3.mkv --view-img --no-trace
 </pre>
 
-<p>To run the bot, you will need to be in Prifddinas and currently on the course.</p>
+<p>To run the bot, you will need to be in Prif and currently on the course.</p>
