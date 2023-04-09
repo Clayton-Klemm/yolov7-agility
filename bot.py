@@ -52,8 +52,8 @@ def sort_tracks_by_distance(coordsOfCenterPoint, tracks):
 class WindowCapture:
     def __init__(self):
         self.recording = False
-        self.clicked_hotspots = {} # so we can avoid clicking the same hotspot over and over again
-        self.tracker = DeepSort(max_age=3, max_iou_distance=2, n_init=3,
+        self.clicked_hotspots = [] # so we can avoid clicking the same hotspot over and over again
+        self.tracker = DeepSort(max_age=1, max_iou_distance=2.5, n_init=3,
                                 nn_budget=10)
         # information on the capture window
         self.top_left_x_window_capture = None
@@ -71,23 +71,29 @@ class WindowCapture:
         # agility-hotspot might remain the closest object. Which clicking the same
         # spot over and over again is not desirable
         for obj_id, obj_data in data:
-            if obj_id not in self.clicked_hotspots:
-                self.clicked_hotspots[obj_id] = True
-                # Calculate the random point within the bounding box
-                bbox_width = obj_data["ltrb"][2] - obj_data["ltrb"][0]
-                bbox_height = obj_data["ltrb"][3] - obj_data["ltrb"][1]
-                random_x_offset = bbox_width * random.uniform(-.15, .15)
-                random_y_offset = bbox_height * random.uniform(-0.15, 0.15)
-                random_point = (round(obj_data["ltrb"][0] + bbox_width / 2 + random_x_offset),
-                                round(obj_data["ltrb"][1] + bbox_height / 2 + random_y_offset))
-                # Adjust the random point to account for the window position
-                random_point = (random_point[0] + window_position.topleft[0],
-                                random_point[1] + window_position.topleft[1])
-                original_position = pyautogui.position()
-                pyautogui.moveTo(random_point)
-                pyautogui.click()
-                pyautogui.moveTo(original_position)
-                break
+            if obj_id in self.clicked_hotspots:
+                # Skip over objects that have already been clicked
+                print(f"{obj_id} has already been clicked")
+                continue
+
+            self.clicked_hotspots.append(obj_id)
+            print(f"{obj_id} has been added to the list")
+            # Click on the second object and append obj_id to clicked_hotspots list
+            bbox_width = obj_data["ltrb"][2] - obj_data["ltrb"][0]
+            bbox_height = obj_data["ltrb"][3] - obj_data["ltrb"][1]
+            random_x_offset = bbox_width * random.uniform(-.15, .15)
+            random_y_offset = bbox_height * random.uniform(-0.15, 0.15)
+            random_point = (round(obj_data["ltrb"][0] + bbox_width / 2 + random_x_offset),
+                            round(obj_data["ltrb"][1] + bbox_height / 2 + random_y_offset))
+            random_point = (random_point[0] + window_position.topleft[0],
+                            random_point[1] + window_position.topleft[1])
+            original_position = pyautogui.position()
+            pyautogui.moveTo(random_point)
+            pyautogui.click()
+            pyautogui.moveTo(original_position)
+            print(f"Current objective {obj_id}")
+            print(f"The list of self.clicked_hotspots: {self.clicked_hotspots}")
+            break
 
     def start_recording(self, window_title):
         self.recording = True
@@ -210,8 +216,8 @@ class WindowCapture:
             # clear the list that prevents us from clicking the same spot twice within a time threshold
             # sometimes when traversing an obsticle that same obsticle is still the closest one and you
             # you don't want to keep trying to go backwards.
-            if time.time() - last_clear_timer > 15:
-                # clearing the list every 15 seconds
+            if time.time() - last_clear_timer > 25:
+                # clearing the list every 25 seconds
                 self.clicked_hotspots.clear()
                 last_clear_timer = time.time()
 
@@ -248,6 +254,7 @@ class App:
         self.label = tk.Label(master, text="Enter window title")
         self.label.pack(fill=tk.NONE, expand=False, side=tk.TOP, padx=10, pady=10)
         self.window_title_entry = tk.Entry(master)
+        self.window_title_entry.insert(0, "moto g fast")
         self.window_title_entry.pack(fill=tk.NONE, expand=False, side=tk.TOP, padx=10, pady=5)
         self.start_button = tk.Button(master, text="Start", command=self.start_recording)
         self.stop_button = tk.Button(master, text="Stop", command=self.stop_recording, state=tk.DISABLED)
